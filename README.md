@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🔖 Smart Bookmark App
 
-## Getting Started
+A simple and secure bookmark manager built using **Next.js App Router** and **Supabase**.  
+The application allows users to sign in using **Google OAuth**, manage their bookmarks privately, and see real-time updates across multiple sessions.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🔗 Live Demo & Repository
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Live App (Vercel):**  
+  https://your-vercel-project.vercel.app
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- **GitHub Repository:**  
+  https://github.com/md-rosh02/smart-bookmark-project
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ✨ Features
 
-To learn more about Next.js, take a look at the following resources:
+- Google OAuth authentication (no email/password)
+- Add bookmarks with title and URL
+- Bookmarks are **private to each user**
+- Real-time updates (sync across multiple tabs)
+- Delete your own bookmarks
+- Clean, responsive UI using Tailwind CSS
+- Fully deployed on Vercel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠 Tech Stack
 
-## Deploy on Vercel
+- **Next.js** (App Router)
+- **Supabase**
+  - Authentication (Google OAuth)
+  - PostgreSQL Database
+  - Realtime subscriptions
+- **Tailwind CSS**
+- **Vercel** (Deployment)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🔐 Security & Privacy
+
+- Supabase **Row Level Security (RLS)** enabled
+- Each bookmark is linked to the authenticated user
+- Policies ensure users can:
+  - Read only their own bookmarks
+  - Insert their own bookmarks
+  - Delete only their own bookmarks
+
+This guarantees that **User A cannot see or modify User B’s bookmarks**.
+
+---
+
+## 🗃 Database Schema
+
+**Table: `bookmarks`**
+
+| Column       | Type      | Description |
+|-------------|----------|-------------|
+| id          | uuid     | Primary key |
+| title       | text     | Bookmark title |
+| url         | text     | Bookmark URL |
+| user_id     | uuid     | References authenticated user |
+| created_at | timestamp | Auto-generated |
+
+---
+
+## ⚙️ Environment Variables
+
+Create a `.env.local` file with the following:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
