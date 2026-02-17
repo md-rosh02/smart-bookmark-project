@@ -73,8 +73,10 @@ Create a `.env.local` file with the following:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+---
 
-🚧 Problems Faced & How I Solved Them
+## 🚧 Problems Faced & How I Solved Them
 
 During the development and deployment of this project, I encountered several real-world issues related to authentication, routing, real-time updates, styling, and deployment. Below are the key problems and how I resolved them.
 
