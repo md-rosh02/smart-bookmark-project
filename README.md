@@ -74,120 +74,82 @@ Create a `.env.local` file with the following:
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
+🚧 Problems Faced & How I Solved Them
 
-### 🔐 Row Level Security (RLS)
+During the development and deployment of this project, I encountered several real-world issues related to authentication, routing, real-time updates, styling, and deployment. Below are the key problems and how I resolved them.
 
-Enabled to ensure:
-- Users can read only their own bookmarks
-- Users can insert only their own bookmarks
-- Users can delete only their own bookmarks
+1️⃣ Google OAuth Redirect Resulted in 404 Error
 
----
+Problem:
+After logging in with Google, the application redirected to /auth/callback and showed a 404 NOT FOUND page.
 
-## 🚧 Problems Faced & How I Solved Them
+Cause:
+Supabase redirects OAuth logins to /auth/callback by default, but this route did not exist in the Next.js App Router.
 
-This project involved multiple real-world issues related to authentication, routing, real-time updates, styling, and deployment.
-
----
-
-### 1️⃣ Google OAuth Redirect Caused 404 Error
-
-**Problem:**  
-After logging in with Google, the app redirected to `/auth/callback` and showed a **404 NOT FOUND** error.
-
-**Cause:**  
-Supabase redirects OAuth users to `/auth/callback` by default, but this route did not exist in the Next.js App Router.
-
-**Solution:**  
-Created the required route:
+Solution:
+I created the required route using the App Router:
 
 src/app/auth/callback/page.js
 
 
-This route completes the OAuth flow and redirects the user back to the homepage.
+This page completes the authentication process and redirects the user back to the home page.
 
----
+2️⃣ Hydration Mismatch Warning in Development
 
-### 2️⃣ Hydration Mismatch Warning in Development
-
-**Problem:**  
+Problem:
 React showed a hydration mismatch warning during development.
 
-**Cause:**  
-A browser extension injected attributes into the `<body>` tag before React hydration.
+Cause:
+A browser extension injected attributes into the <body> element before React hydration.
 
-**Solution:**  
-Used `suppressHydrationWarning` on the `<body>` element in `layout.js`.  
-This resolved the warning without affecting production.
+Solution:
+I added suppressHydrationWarning to the <body> tag in layout.js, which safely resolved the warning without affecting production behavior.
 
----
+3️⃣ Bookmark Deletion Failed with 400 Error
 
-### 3️⃣ Bookmark Deletion Returned 400 Error
+Problem:
+Deleting a bookmark sometimes failed with a 400 error from Supabase.
 
-**Problem:**  
-Deleting a bookmark sometimes returned a **400 error** from Supabase.
+Cause:
+An optimistic UI update initially used temporary IDs, which did not match the actual database record IDs.
 
-**Cause:**  
-Temporary IDs were used for optimistic UI updates, which did not match actual database IDs.
+Solution:
+I removed temporary IDs and used the real ID returned by Supabase by calling .select() after inserting a bookmark, ensuring delete operations always used valid IDs.
 
-**Solution:**  
-Removed fake IDs and used the real ID returned by Supabase using `.select()` after insertion.
+4️⃣ Real-Time Updates Were Not Syncing Consistently
 
----
+Problem:
+Bookmarks added in one tab were not always reflected in another tab.
 
-### 4️⃣ Realtime Updates Were Not Syncing Across Tabs
+Cause:
+The bookmarks table was not enabled for real-time replication, and WebSocket connections were restarting during development hot reloads.
 
-**Problem:**  
-Changes in one tab were not reflected in another.
+Solution:
+I enabled real-time replication for the bookmarks table in Supabase and scoped real-time subscriptions by user_id.
 
-**Cause:**  
-The `bookmarks` table was not enabled for realtime replication.
+5️⃣ Tailwind CSS Styles Were Not Applied
 
-**Solution:**  
-Enabled realtime replication in Supabase and scoped realtime subscriptions by `user_id`.
+Problem:
+The UI rendered correctly, but Tailwind CSS styles were missing.
 
----
+Cause:
+Incorrect content paths in tailwind.config.js when using the src/app directory structure.
 
-### 5️⃣ Tailwind CSS Styles Were Not Applied
-
-**Problem:**  
-The UI rendered without Tailwind styles.
-
-**Cause:**  
-Incorrect `content` paths in `tailwind.config.js` when using the `src/app` directory.
-
-**Solution:**  
-Updated Tailwind configuration to include:
+Solution:
+I updated the Tailwind configuration to include:
 
 ./src/app/**/*.{js,jsx}
 
 
-and ensured `globals.css` was imported in `layout.js`.
+and ensured globals.css was properly imported in layout.js.
 
----
+6️⃣ Git & Deployment Issues During Submission
 
-## ⚡ Real-Time Implementation
+Problem:
+Git push errors (non-fast-forward) and initial 404 errors on Vercel deployment.
 
-- Supabase Realtime channels used
-- Subscribed to INSERT and DELETE events
-- Filtered updates by authenticated user
-- UI updates instantly without refresh
+Cause:
+Remote repository history mismatch and incorrect Vercel root directory configuration.
 
----
-
-## 🧠 What I Learned
-
-- Handling OAuth with Next.js App Router
-- Using Supabase Row Level Security
-- Managing realtime subscriptions
-- Debugging hydration issues
-- Deploying OAuth-based apps to Vercel
-
----
-
-## 🏁 Conclusion
-
-This project demonstrates secure authentication, private per-user data access, real-time updates, and a production-ready deployment workflow.  
-All assignment requirements have been successfully implemented.
-
----
+Solution:
+I resolved Git conflicts using git pull --rebase, ensured the root directory was set to ./ in Vercel, and redeployed the application successfully.
